@@ -1,52 +1,34 @@
 import streamlit as st
-from utils.google_sheets import *
+from utils import google_sheets as gs
 
 # Initialize Google Sheets utility
 # gs = GoogleSheets()
 
 def insert_client_info():
     st.subheader("Inserir Informações Cadastrais de um Cliente")
-    instagram = ''
-    name = st.text_input("Nome do Cliente")
-    birth_date = st.date_input("Data de Nascimento")
-    cpf = st.text_input("CPF")
-    email = st.text_input("Email do Cliente")
-    phone = st.text_input("Telefone do Cliente")
-    instagram = st.text_input("Instagram")
-    city = st.text_input("Cidade")
-    address = st.text_input("Endereço")
-    rg = st.text_input("RG")
-    passport = st.text_input("Passaporte")
-    passport_expiry_date = st.date_input("Data de Validade do Passaporte")
+    crm_instagram = ''
+    crm_name = st.text_input("Nome do Cliente", key="crm_name")
+    crm_birth_date = st.date_input("Data de Nascimento", key="crm_birth_date")
+    crm_cpf = st.text_input("CPF", key="crm_cpf")
+    crm_email = st.text_input("Email do Cliente", key="crm_email")
+    crm_phone = st.text_input("Telefone do Cliente", key="crm_phone")
+    crm_instagram = st.text_input("Instagram", key="crm_instagram")
+    crm_city = st.text_input("Cidade", key="crm_city")
+    crm_address = st.text_input("Endereço", key="crm_address")
+    crm_rg = st.text_input("RG", key="crm_rg")
+    crm_passport = st.text_input("Passaporte", key="crm_passport")
+    crm_passport_expiry_date = st.date_input("Data de Validade do Passaporte", key="crm_passport_expiry_date")
     
     if st.button("Salvar"):
-        if name and birth_date and cpf and email and phone and instagram and city and address and rg and passport and passport_expiry_date:
-            # gs.insert_client_data(name, birth_date, cpf, email, phone, instagram, city, address, rg, passport, passport_expiry_date)
+        if crm_name and crm_birth_date and crm_cpf and crm_email and crm_phone and crm_instagram and crm_city and crm_address and crm_rg and crm_passport and crm_passport_expiry_date:
+            values = crm_name, crm_birth_date, crm_cpf, crm_email, crm_phone, crm_instagram, crm_city, crm_address, crm_rg, crm_passport, crm_passport_expiry_date
+            gs.insert_data_row_sheet('CRM Clientes', values)
             st.success("Informações do cliente inseridas com sucesso!")
         else:
             st.error("Por favor, preencha todos os campos.")
 
-def consult_client():
-    st.subheader("Consulta do Cliente")
-    search_option = st.radio("Pesquisar por", ["Nome", "CPF"])
-    if search_option == "Nome":
-        client_name = st.text_input("Nome do Cliente", key="client_name")
-    else:
-        client_cpf = st.text_input("CPF do Cliente", key="client_cpf")
-    
-    if st.button("Consultar"):
-        if client_name or client_cpf:
-            # client_data = gs.get_client_data(client_id)
-            client_data= True
-            if client_data:
-                st.write(client_data)
-            else:
-                st.error("Cliente não encontrado.")
-        else:
-            st.error("Por favor, insira o nome ou cpf do cliente.")
-
 def alter_client_info():
-    st.subheader("Alteração de Informação Cadastral")
+    st.subheader("Consulta e Alteração de Informação Cadastral")
     sel_client_name = st.text_input("Nome do Cliente", key="sel_client_name")
     new_birth_date = st.date_input("Nova Data de Nascimento")
     new_cpf = st.text_input("Novo CPF")
@@ -68,13 +50,10 @@ def alter_client_info():
 
 def crm_clientes():
     st.title("CRM Clientes")
-    tab1, tab2, tab3 = st.tabs(["Inserir", "Consultar", "Alterar"])
+    tab1, tab2 = st.tabs(["Inserir", "Consultar e Alterar"])
     
     with tab1:
         insert_client_info()
     
     with tab2:
-        consult_client()
-    
-    with tab3:
         alter_client_info()

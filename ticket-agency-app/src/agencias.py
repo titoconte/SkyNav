@@ -1,76 +1,66 @@
 import streamlit as st
 from utils.google_sheets import *
-
-# Initialize Google Sheets utility
-# gs = GoogleSheets()
+from utils import google_sheets as gs
 
 def inserir_agencia():
     st.subheader("Inserir Informações da Agência")
-    nome = st.text_input("Nome da Agência", key="nome")
-    telegram = st.text_input("Telegram", key="telegram")
-    balcao = st.text_input("Balcão", key="balcao")
-    telefone = st.text_input("Telefone", key="telefone")
-    instagram = st.text_input("Instagram", key="instagram")
-    email = st.text_input("Email", key="email")
-    cidade = st.text_input("Cidade", key="cidade")
-    mastermiles = st.text_input("MasterMiles", key="mastermiles")
-    qtde_milhas = st.text_input("Quantidade de Milhas", key="qtde_milhas")
-    preco = st.text_input("Preço", key="preco")
-    taxas = st.text_input("Taxas", key="taxas")
-    total = st.text_input("Total", key="total")
+    nome_agencia = st.text_input("Nome da Agência", key="nome_agencia")
+    telegram_agencia = st.text_input("Telegram", key="telegram_agencia")
+    balcao_agencia = st.text_input("Balcão", key="balcao_agencia")
+    telefone_agencia = st.text_input("Telefone", key="telefone_agencia")
+    instagram_agencia = st.text_input("Instagram", key="instagram_agencia")
+    email_agencia = st.text_input("Email", key="email_agencia")
+    cidade_agencia = st.text_input("Cidade", key="cidade_agencia")
+    mastermiles_agencia = st.text_input("MasterMiles", key="mastermiles_agencia")
+    qtde_milhas_agencia = st.text_input("Quantidade de Milhas", key="qtde_milhas_agencia")
+    preco_agencia = st.text_input("Preço", key="preco_agencia")
+    taxas_agencia = st.text_input("Taxas", key="taxas_agencia")
+    total_agencia = st.text_input("Total", key="total_agencia")
     
     if st.button("Salvar"):
         # Logic to save agency information to Google Sheets
-        # gs.inserir_agencia(nome, endereco, telefone)
+        if nome_agencia and telegram_agencia and balcao_agencia and telefone_agencia and instagram_agencia and email_agencia and cidade_agencia and mastermiles_agencia and qtde_milhas_agencia and preco_agencia and taxas_agencia and total_agencia:
+            values =[[nome_agencia, telegram_agencia, balcao_agencia, telefone_agencia, instagram_agencia, email_agencia, cidade_agencia, mastermiles_agencia, qtde_milhas_agencia, preco_agencia, taxas_agencia, total_agencia]]
+            gs.insert_data_row_sheet('Agencias',values)
+            st.success("Agência inserida com sucesso!")
+        else:
+            st.error("Por favor, preencha todos os campos.")
         st.success("Agência inserida com sucesso!")
 
-def consultar_agencia():
-    st.subheader("Consultar Milheiro")
-    nome = st.text_input("Nome da Milheiro")
-    
-    if st.button("Consultar"):
-        # Logic to fetch agency information from Google Sheets
-        agencia = True # gs.consultar_agencia(nome)
-        if agencia:
-            st.write(agencia)
-        else:
-            st.warning("Agência não encontrada.")
-
 def alterar_agencia():
-    st.subheader("Alterar Informações da Agência")
-    nomes_milheiro = ["Agência 1", "Agência 2", "Agência 3"]  # Replace with dynamic fetching of agency names
-    nome = st.selectbox("Nome da Milheiro", nomes_milheiro, key="alter_nome")
-    telegram = st.text_input("Telegram", key="alter_telegram")
-    balcao = st.text_input("Balcão", key="alter_balcao")
-    telefone = st.text_input("Telefone", key="alter_telefone")
-    instagram = st.text_input("Instagram", key="alter_instagram")
-    email = st.text_input("Email", key="alter_email")
-    cidade = st.text_input("Cidade", key="alter_cidade")
-    mastermiles = st.text_input("MasterMiles", key="alter_mastermiles")
-    qtde_milhas = st.text_input("Quantidade de Milhas", key="alter_qtde_milhas")
-    preco = st.text_input("Preço", key="alter_preco")
-    taxas = st.text_input("Taxas", key="alter_taxas")
-    total = st.text_input("Total", key="alter_total")
+    st.subheader("Consultar e Alterar Informações da Agência")
+    df_all = gs.read_sheet('Agencias')
+    nomes_agencia = df_all['Nome'].values  # Replace with dynamic fetching of agency names
+    alter_nome_agencia = st.selectbox("Nome da Milheiro", nomes_agencia, key="alter_nome_agencia")
     
     if st.button("Buscar"):
-        # Logic to fetch agency information for editing
-        agencia = True #gs.consultar_agencia(nome)
-        if agencia:
+        df = df_all.query('Nome == @alter_nome_agencia')
+        alter_id_agencia = df['Número Milheiro'].values[0]
+        n = df.index+1
+        alter_telegram_agencia = st.text_input("Telegram", value=df['Telegram'].values[0], key="alter_telegram_agencia")
+        alter_balcao_agencia = st.text_input("Balcão", value=df['Balcão'].values[0], key="alter_balcao_agencia")
+        alter_telefone_agencia = st.text_input("Telefone", value=df['Telefone'].values[0], key="alter_telefone_agencia")
+        alter_instagram_agencia = st.text_input("Instagram", value=df['Instagram'].values[0], key="alter_instagram_agencia")
+        alter_email_agencia = st.text_input("Email", value=df['Email'].values[0], key="alter_email_agencia")
+        alter_cidade_agencia = st.text_input("Cidade", value=df['Cidade'].values[0], key="alter_cidade_agencia")
+        alter_mastermiles_agencia = st.text_input("MasterMiles", value=df['MasterMiles'].values[0], key="alter_mastermiles_agencia")
+        alter_qtde_milhas_agencia = st.text_input("Quantidade de Milhas", value=df['qtde milhas'].values[0], key="alter_qtde_milhas_agencia")
+        alter_preco_agencia = st.text_input("Preço", value=df['preco'].values[0], key="alter_preco_agencia")
+        alter_taxas_agencia = st.text_input("Taxas", value=df['taxas'].values[0], key="alter_taxas_agencia")
+        alter_total_agencia = st.text_input("Total", value=df['total'].values[0], key="alter_total_agencia")
             
-            if st.button("Atualizar"):
-                # Logic to update agency information in Google Sheets
-                # gs.alterar_agencia(nome, novo_nome, novo_endereco, novo_telefone)
-                st.success("Agência atualizada com sucesso!")
-        else:
-            st.warning("Agência não encontrada.")
+        if st.button("Atualizar"):
+            # Logic to update agency information in Google Sheets
+            gs.update_row_sheet('Agencias', n, [alter_nome_agencia,alter_id_agencia,alter_telegram_agencia, alter_balcao_agencia, alter_telefone_agencia, alter_instagram_agencia, alter_email_agencia, alter_cidade_agencia, alter_mastermiles_agencia, alter_qtde_milhas_agencia, alter_preco_agencia, alter_taxas_agencia, alter_total_agencia])
+            st.success("Agência atualizada com sucesso!")
+    else:
+        st.warning("Agência não encontrada.")
 
 def agencia_screen():
     st.title("Controle de Agências")
-    tab1, tab2, tab3 = st.tabs(["Inserir", "Consultar", "Alterar"])
+    tab1, tab2 = st.tabs(["Inserir", "Consultar e Alterar"])
     with tab1:
         inserir_agencia()
     with tab2:
-        consultar_agencia()
-    with tab3:
         alterar_agencia()
 

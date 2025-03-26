@@ -14,7 +14,6 @@ def get_credentials():
     try:
         # Update this path to your service account JSON file location
         SERVICE_ACCOUNT_FILE = os.path.join(os.path.dirname(__file__),'service-account-key.json')
-        
         if not os.path.exists(SERVICE_ACCOUNT_FILE):
             raise FileNotFoundError(f"Service account file '{SERVICE_ACCOUNT_FILE}' not found")
         
@@ -128,5 +127,5 @@ def clear_all_row_sheet(sheet_name,num):
 # Example usage:
 # sheet_name = "Milheiros"
 if __name__=="__main__":
-    df = read_sheet('Agencias')
+    df = read_sheet('Milheiros')
     print(df)

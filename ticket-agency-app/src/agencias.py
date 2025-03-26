@@ -25,7 +25,6 @@ def inserir_agencia():
             st.success("Agência inserida com sucesso!")
         else:
             st.error("Por favor, preencha todos os campos.")
-        st.success("Agência inserida com sucesso!")
 
 def alterar_agencia():
     st.subheader("Consultar e Alterar Informações da Agência")

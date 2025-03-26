@@ -28,7 +28,7 @@ def insert_milheiro():
     cpf = st.text_input("CPF:")
 
     if st.button("Salvar"):
-        # gs.insert_data("Milheiros", milheiro_data)
+        # gs.insert_data_row_sheet("Milheiros", milheiro_data)
         st.success("Milheiro inserido com sucesso!")
 
 def consult_milheiro():

@@ -18,7 +18,7 @@ def controle_emissoes():
         cliente_nome = st.text_input("Nome do Cliente")
         voo_data = st.date_input("Data do Voo")
         if st.button("Inserir"):
-            # gs.insert_data("Emissoes", [cliente_nome, voo_data])  # Adjust according to your data structure
+            # gs.insert_data_row_sheet("Emissoes", [cliente_nome, voo_data])  # Adjust according to your data structure
             st.success("Informações inseridas com sucesso!")
 
     # Aba 3 - Consultar emissões

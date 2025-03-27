@@ -21,7 +21,22 @@ def insert_client_info():
     
     if st.button("Salvar"):
         if crm_name and crm_birth_date and crm_cpf and crm_email and crm_phone and crm_instagram and crm_city and crm_address and crm_rg and crm_passport and crm_passport_expiry_date:
-            values = crm_name, crm_birth_date, crm_cpf, crm_email, crm_phone, crm_instagram, crm_city, crm_address, crm_rg, crm_passport, crm_passport_expiry_date
+            client_code = len(gs.read_sheet('CRM Clientes')['Número Cliente'].values) + 1
+            client_code = f"P{client_code}"
+            values = [[
+                client_code,
+                crm_name, 
+                str(crm_birth_date), 
+                crm_cpf, 
+                crm_email, 
+                crm_phone, 
+                crm_instagram, 
+                crm_city, 
+                crm_address, 
+                crm_rg, 
+                crm_passport, 
+                str(crm_passport_expiry_date)
+                ]]
             gs.insert_data_row_sheet('CRM Clientes', values)
             st.success("Informações do cliente inseridas com sucesso!")
         else:

@@ -29,7 +29,7 @@ def controle_vendas():
             numero_cliente_venda = numero_cliente[nomes==nome_venda]
             if len(numero_cliente_venda) >1:
                 numero_cliente_venda = numero_cliente_venda[0]
-            venda_code = f"C{venda_code}"
+            venda_code = f"V{venda_code}"
             values=[[
                 str(venda_code),
                 str(nome_venda), 

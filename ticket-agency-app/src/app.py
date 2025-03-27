@@ -3,7 +3,7 @@ from crm_clientes import crm_clientes
 from milheiros import milheiros_screen
 from agencias import agencia_screen
 from controle_compras import controle_compras
-from controle_vendas import controle_vendas_screen
+from controle_vendas import controle_vendas
 from controle_emissoes import controle_emissoes
 from fluxo_caixa import fluxo_caixa
 from match_margens import match_margens_report
@@ -29,7 +29,7 @@ def main():
     elif choice == "Controle de Compras":
         controle_compras()
     elif choice == "Controle de Vendas":
-        controle_vendas_screen()
+        controle_vendas()
     elif choice == "Controle de Emissões de Voos":
         controle_emissoes()
     elif choice == "Controle do Fluxo de Caixa":

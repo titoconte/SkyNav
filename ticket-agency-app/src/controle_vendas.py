@@ -1,61 +1,52 @@
+import streamlit as st
 from utils.google_sheets import *
+from utils import google_sheets as gs
 
-def display_sales_report():
-    sales_data = read_sales_data('Sales')
-    # Code to display sales report using Streamlit
-    st.title("Relatório de Vendas")
-    st.dataframe(sales_data)
-
-def insert_sales_info():
-    st.title("Inserir Informações de Vendas")
-    client_name = st.text_input("Nome do Cliente")
-    sale_amount = st.number_input("Valor da Venda", min_value=0.0)
-    sale_date = st.date_input("Data da Venda")
+def controle_vendas():
+    st.subheader("Controle de Vendas")
+    # ler aba de milheiros na coluna numero milheiro coletar todos os códigos e exibir em lista suspensa
+    nomes = gs.read_sheet('CRM Clientes')['Nome'].values
+    numero_cliente = gs.read_sheet('CRM Clientes')['Número Cliente'].values
+    lastro = gs.read_sheet('Controle de Compras')['Numero Compra'].values
+    nome_venda = st.selectbox("Cliente", nomes, key="nome_venda")
+    categoria_venda = st.text_input("Categoria", key="categoria_venda")
+    lastro_venda = st.selectbox("Lastro", lastro, key="lastro_venda")
+    # data da venda
+    data_venda = st.date_input("Data da Venda", key="data_venda")
+    qtd_emissoes_venda = st.text_input("Quantidade de Emissões", key="qtd_emissoes_venda")
+    valor_venda = st.text_input("Valor", key="valor_venda")
+    qtd_milhas_venda = st.text_input("Quantidade de Milhas", key="qtd_milhas_venda")
+    taxa_venda = st.text_input("Taxa", key="taxa_venda")    
+    margem_venda = st.text_input("Margem", key="margem_venda")
+    pix_enviado_venda = st.text_input("PIX Enviado", key="pix_enviado_venda")
 
     if st.button("Salvar"):
-        insert_sales_data(client_name, sale_amount, sale_date)
-        st.success("Informações de venda inseridas com sucesso!")
-
-def consult_sales_info():
-    st.title("Consulta de Vendas")
-    sale_id = st.text_input("ID da Venda")
-
-    if st.button("Consultar"):
-        sales_info = read_sales_data('Sales', sale_id)
-        if sales_info:
-            st.write(sales_info)
+        # Logic to save agency information to Google Sheets
+        if nome_venda and categoria_venda and lastro_venda and data_venda and qtd_emissoes_venda and valor_venda and qtd_milhas_venda  and taxa_venda and pix_enviado_venda:
+            venda_code = len(gs.read_sheet('Controle de Vendas')['Numero Venda'].values) + 1
+            valor_total_venda = float(valor_venda) * (float(qtd_milhas_venda))/1000
+            total_plus_taxas_venda = valor_total_venda + float(taxa_venda) +float(margem_venda)
+            numero_cliente_venda = numero_cliente[nomes==nome_venda]
+            if len(numero_cliente_venda) >1:
+                numero_cliente_venda = numero_cliente_venda[0]
+            venda_code = f"C{venda_code}"
+            values=[[
+                str(venda_code),
+                str(nome_venda), 
+                str(numero_cliente_venda),
+                str(categoria_venda), 
+                str(lastro_venda), 
+                data_venda.strftime('%d/%m/%y'), 
+                str(qtd_emissoes_venda),
+                str(valor_venda),
+                str(qtd_milhas_venda),
+                str(valor_total_venda),
+                str(taxa_venda), 
+                str(margem_venda),
+                str(total_plus_taxas_venda),
+                str(pix_enviado_venda)
+                ]]
+            gs.insert_data_row_sheet('Controle de Vendas',values)
+            st.success("Venda inserida com sucesso!")
         else:
-            st.error("Venda não encontrada.")
-
-def update_sales_info():
-    st.title("Alteração de Informações de Vendas")
-    sale_id = st.text_input("ID da Venda")
-
-    if st.button("Carregar Informações"):
-        sales_info = read_sales_data('Sales', sale_id)
-        if sales_info:
-            client_name = st.text_input("Nome do Cliente", sales_info['client_name'])
-            sale_amount = st.number_input("Valor da Venda", min_value=0.0, value=sales_info['sale_amount'])
-            sale_date = st.date_input("Data da Venda", value=sales_info['sale_date'])
-
-            if st.button("Atualizar"):
-                update_sales_data(sale_id, client_name, sale_amount, sale_date)
-                st.success("Informações de venda atualizadas com sucesso!")
-        else:
-            st.error("Venda não encontrada.")
-
-def controle_vendas_screen():
-    st.sidebar.title("Controle de Vendas")
-    option = st.sidebar.selectbox("Escolha uma opção", ["Relatório de Vendas", "Inserir Informações", "Consultar Vendas", "Alterar Informações"])
-
-    if option == "Relatório de Vendas":
-        display_sales_report()
-    elif option == "Inserir Informações":
-        insert_sales_info()
-    elif option == "Consultar Vendas":
-        consult_sales_info()
-    elif option == "Alterar Informações":
-        update_sales_info()
-
-if __name__ == "__main__":
-    main()
+            st.error("Por favor, preencha todos os campos.")

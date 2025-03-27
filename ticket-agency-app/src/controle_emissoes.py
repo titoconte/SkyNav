@@ -1,41 +1,49 @@
 import streamlit as st
 from utils.google_sheets import *
+from utils import google_sheets as gs
+
 
 # Initialize Google Sheets utility
 # gs = GoogleSheets()
 
 def controle_emissoes():
     st.title("Controle de Emissões de Voos")
+    df_vendas = gs.read_sheet('Controle de Vendas')
+    df_compras = gs.read_sheet('Controle de Compras')
+    df = df_vendas.merge(df_compras, left_on='Lastro', right_on='Numero Compra')
+    numero_venda_emissao_dados = df['Numero Venda'].values
 
-    # Aba 1 - Status das emissões ainda não concluídas
-    if st.sidebar.radio("Selecione uma aba", ["Status das emissões", "Inserir informações", "Consultar emissões", "Alterar informações"]) == "Status das emissões":
-        # status_emissoes = gs.read_data("Emissoes", "Status")  # Assuming "Emissoes" is the sheet name and "Status" is the tab
-        # st.write(status_emissoes)
-        st.sucess('Foi')
+    numero_venda_emissao = st.selectbox("Número Venda", numero_venda_emissao_dados, key="numero_venda_emissao")
+    data_emissao = st.date_input("Data da Emissão", key="data_emissao")
+    cod_reserva_emissao = st.text_input("Código de Reserva", key="cod_reserva_emissao")
+    nu_compra_emissao = st.text_input("Número da Compra", key="nu_compra_emissao")
 
-    # Aba 2 - Inserir informações cadastrais de um cliente
-    elif st.sidebar.radio("Selecione uma aba", ["Status das emissões", "Inserir informações", "Consultar emissões", "Alterar informações"]) == "Inserir informações":
-        cliente_nome = st.text_input("Nome do Cliente")
-        voo_data = st.date_input("Data do Voo")
-        if st.button("Inserir"):
-            # gs.insert_data_row_sheet("Emissoes", [cliente_nome, voo_data])  # Adjust according to your data structure
-            st.success("Informações inseridas com sucesso!")
+    if st.button("Salvar"):
+        # Logic to save agency information to Google Sheets
+        if numero_venda_emissao and data_emissao and cod_reserva_emissao and nu_compra_emissao:
+            data = df.loc[df['Numero Venda'] == numero_venda_emissao,['Cliente','Número Cliente','Programa','Qtde milhas','Número Milheiro']]
+            cliente_emissao = data['Cliente'].values[0]
+            numero_cliente_emissao = data['Número Cliente'].values[0]
+            programa_emissao = data['Programa'].values[0]
+            qtd_milhas_emissao = data['Qtde milhas'].values[0]
+            numero_milheiro_emissao = data['Número Milheiro'].values[0]
 
-    # Aba 3 - Consultar emissões
-    elif st.sidebar.radio("Selecione uma aba", ["Status das emissões", "Inserir informações", "Consultar emissões", "Alterar informações"]) == "Consultar emissões":
-        cliente_nome = st.text_input("Nome do Cliente para consulta")
-        if st.button("Consultar"):
-            # emissao_info = gs.read_data("Emissoes", "Consulta", cliente_nome)  # Adjust according to your data structure
-            # st.write(emissao_info)
-            st.sucess("foi")
-
-    # Aba 4 - Alterar informações cadastrais
-    elif st.sidebar.radio("Selecione uma aba", ["Status das emissões", "Inserir informações", "Consultar emissões", "Alterar informações"]) == "Alterar informações":
-        cliente_nome = st.text_input("Nome do Cliente para alteração")
-        nova_data = st.date_input("Nova Data do Voo")
-        if st.button("Alterar"):
-            # gs.update_data("Emissoes", cliente_nome, nova_data)  # Adjust according to your data structure
-            st.success("Informações alteradas com sucesso!")
+            values=[[
+                str(cliente_emissao),
+                str(numero_cliente_emissao), 
+                str(numero_venda_emissao),
+                data_emissao.strftime('%d/%m/%y'), 
+                str(cod_reserva_emissao), 
+                str(nu_compra_emissao), 
+                str(programa_emissao),
+                str(qtd_milhas_emissao),
+                str(numero_milheiro_emissao)
+                ]]
+            gs.insert_data_row_sheet('Controle de Emissões',values)
+            st.success("Emissao de Passagem inserida com sucesso!")
+        else:
+            st.error("Por favor, preencha todos os campos.")
+    
 
 if __name__ == "__main__":
     controle_emissoes()
